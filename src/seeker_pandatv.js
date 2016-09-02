@@ -6,14 +6,14 @@
 import { assert, canPlayM3U8, httpProxy } from './util/index'
 export default { match, getVideos }
 
-function match () {
-  return /^http\:\/\/www\.panda\.tv\/[0-9]+$/.test(location.href)
+function match (url) {
+  return url.attr('host').indexOf('panda') >= 0 && window.PDR && window.PDR.getRoomId() !== ''
 }
 
 function getVideos (url, callback) {
   assert(canPlayM3U8, '请使用safari浏览器')
 
-  let room_id = url.attr('path').match(/^\/([0-9]+)$/)[1]
+  let room_id = window.PDR.getRoomId()
   let m3u8_api = 'http://room.api.m.panda.tv/index.php?method=room.shareapi&roomid='
   httpProxy({url : m3u8_api + room_id}, (response) => {
     assert(response != -1, '获取失败')
